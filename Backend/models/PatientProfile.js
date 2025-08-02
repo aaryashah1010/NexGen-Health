@@ -1,139 +1,102 @@
-const mongoose = require('mongoose');
+const { DataTypes } = require('sequelize');
+const { sequelize } = require('../config/db');
+const User = require('./User');
 
-const patientProfileSchema = new mongoose.Schema({
+const PatientProfile = sequelize.define('PatientProfile', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true
+  },
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    unique: true
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id'
+    }
   },
   dateOfBirth: {
-    type: Date,
-    required: [true, 'Date of birth is required']
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+    validate: {
+      isDate: true,
+      isPast(value) {
+        if (new Date(value) >= new Date()) {
+          throw new Error('Date of birth must be in the past');
+        }
+      }
+    }
   },
   bloodGroup: {
-    type: String,
-    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-    required: [true, 'Blood group is required']
+    type: DataTypes.ENUM('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'),
+    allowNull: false
   },
   gender: {
-    type: String,
-    enum: ['Male', 'Female', 'Other'],
-    required: [true, 'Gender is required']
+    type: DataTypes.ENUM('male', 'female', 'other'),
+    allowNull: false
   },
   emergencyContact: {
-    name: {
-      type: String,
-      required: [true, 'Emergency contact name is required'],
-      trim: true
-    },
-    phone: {
-      type: String,
-      required: [true, 'Emergency contact phone is required'],
-      match: [/^[0-9]{10}$/, 'Please enter a valid 10-digit phone number']
-    },
-    relationship: {
-      type: String,
-      required: [true, 'Relationship with emergency contact is required'],
-      enum: ['Spouse', 'Parent', 'Child', 'Sibling', 'Friend', 'Other']
+    type: DataTypes.JSONB,
+    allowNull: false,
+    validate: {
+      isValidEmergencyContact(value) {
+        if (!value.name || !value.phone || !value.relationship) {
+          throw new Error('Emergency contact must have name, phone, and relationship');
+        }
+      }
     }
   },
-  medicalHistory: [{
-    condition: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    diagnosedDate: Date,
-    isActive: {
-      type: Boolean,
-      default: true
-    },
-    medications: [String],
-    notes: String
-  }],
-  allergies: [{
-    allergen: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    severity: {
-      type: String,
-      enum: ['Mild', 'Moderate', 'Severe'],
-      default: 'Mild'
-    },
-    reaction: String
-  }],
-  insuranceInfo: {
-    provider: {
-      type: String,
-      trim: true
-    },
-    policyNumber: {
-      type: String,
-      trim: true
-    },
-    groupNumber: String,
-    expiryDate: Date
+  medicalHistory: {
+    type: DataTypes.TEXT,
+    allowNull: true
   },
-  currentMedications: [{
-    name: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    dosage: String,
-    frequency: String,
-    startDate: Date,
-    endDate: Date,
-    isActive: {
-      type: Boolean,
-      default: true
-    }
-  }],
   height: {
-    type: Number,
-    min: [50, 'Height must be at least 50 cm'],
-    max: [250, 'Height cannot exceed 250 cm']
+    type: DataTypes.DECIMAL(5, 2), // cm, e.g., 175.50
+    allowNull: true,
+    validate: {
+      min: 50,
+      max: 250
+    }
   },
   weight: {
-    type: Number, 
-    min: [1, 'Weight must be at least 1 kg'],
-    max: [300, 'Weight cannot exceed 300 kg']
-  },
-  address: {
-    street: String,
-    city: String,
-    state: String,
-    zipCode: String,
-    country: {
-      type: String,
-      default: 'India'
+    type: DataTypes.DECIMAL(5, 2), // kg, e.g., 70.50
+    allowNull: true,
+    validate: {
+      min: 10,
+      max: 300
     }
   },
-  occupation: {
-    type: String,
-    trim: true
+  address: {
+    type: DataTypes.TEXT,
+    allowNull: false
   },
-  maritalStatus: {
-    type: String,
-    enum: ['Single', 'Married', 'Divorced', 'Widowed'],
-    default: 'Single'
+  occupation: {
+    type: DataTypes.STRING(100),
+    allowNull: true
   },
   isActive: {
-    type: Boolean,
-    default: true
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
   }
 }, {
-  timestamps: true
+  tableName: 'patient_profiles',
+  timestamps: true,
+  underscored: true
+});
+
+// Define the relationship
+PatientProfile.belongsTo(User, {
+  foreignKey: 'userId',
+  as: 'user',
+  onDelete: 'CASCADE'
+});
+
+User.hasOne(PatientProfile, {
+  foreignKey: 'userId',
+  as: 'patientProfile'
 });
 
 
-patientProfileSchema.index({ userId: 1 });
-patientProfileSchema.index({ bloodGroup: 1 });
-patientProfileSchema.index({ isActive: 1 });
 
-
-
-module.exports = mongoose.model('PatientProfile', patientProfileSchema); 
+module.exports = PatientProfile;
