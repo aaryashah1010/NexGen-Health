@@ -8,6 +8,7 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import AdminDashboard from './components/admin/Dashboard';
 import PatientDashboard from './components/patient/Dashboard';
+import TestConnection from './components/TestConnection';
 
 const Home = () => (
   <div className="min-h-screen bg-gray-50">
@@ -60,6 +61,7 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Home />} />
+              <Route path="/test" element={<TestConnection />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               

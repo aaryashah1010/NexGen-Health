@@ -20,7 +20,7 @@ const Login = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
-    setError(''); // Clear error when user types
+    setError(''); 
   };
 
   const handleSubmit = async (e) => {
@@ -201,30 +201,6 @@ const Login = () => {
             </div>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Demo Credentials</span>
-              </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <div className="bg-gray-50 p-3 rounded-md">
-                <p className="text-xs font-medium text-gray-700">Admin</p>
-                <p className="text-xs text-gray-500">admin@test.com</p>
-                <p className="text-xs text-gray-500">password123</p>
-              </div>
-              <div className="bg-gray-50 p-3 rounded-md">
-                <p className="text-xs font-medium text-gray-700">Patient</p>
-                <p className="text-xs text-gray-500">patient@test.com</p>
-                <p className="text-xs text-gray-500">password123</p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
