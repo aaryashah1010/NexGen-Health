@@ -8,6 +8,7 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import AdminDashboard from './components/admin/Dashboard';
 import PatientDashboard from './components/patient/Dashboard';
+import PatientProfile from './components/patient/Profile';
 import TestConnection from './components/TestConnection';
 
 const Home = () => (
@@ -85,6 +86,7 @@ function App() {
                   <ProtectedRoute allowedRoles={['patient']}>
                     <Routes>
                       <Route path="dashboard" element={<PatientDashboard />} />
+                      <Route path="profile" element={<PatientProfile />} />
                       <Route path="*" element={<Navigate to="dashboard" replace />} />
                     </Routes>
                   </ProtectedRoute>

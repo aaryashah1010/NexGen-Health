@@ -52,6 +52,14 @@ export const api = {
 
   getCurrentUser: () => apiRequest('/auth/me'),
 
+  // Patient endpoints
+  createPatientProfile: (profileData) => apiRequest('/patient/profile', {
+    method: 'POST',
+    body: JSON.stringify(profileData),
+  }),
+
+  getPatientProfile: () => apiRequest('/patient/profile'),
+
   // Test endpoint - call the root endpoint directly
   testConnection: async () => {
     const response = await fetch('http://localhost:5000/');

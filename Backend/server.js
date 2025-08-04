@@ -5,6 +5,7 @@ require('dotenv').config();
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
+const patientRoutes = require('./routes/patientRoutes');
 
 // Debug server startup
 console.log('🚀 Starting NexGen Health Backend Server...');
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/patient', patientRoutes);
 
 // Test route
 app.get('/', (req, res) => {
