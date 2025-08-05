@@ -78,7 +78,7 @@ const Register = () => {
         if (formData.role === 'admin') {
           navigate('/admin/dashboard');
         } else {
-          navigate('/patient/dashboard');
+          navigate('/patient/profile-verify');
         }
       } else {
         setError(result.error || 'Registration failed. Please try again.');

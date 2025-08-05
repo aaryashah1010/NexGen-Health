@@ -10,7 +10,7 @@ import AdminDashboard from './components/admin/Dashboard';
 import PatientDashboard from './components/patient/Dashboard';
 import PatientProfile from './components/patient/Profile';
 import TestConnection from './components/TestConnection';
-
+import ProfileVerify from './components/patient/ProfileVerify';
 const Home = () => (
   <div className="min-h-screen bg-gray-50">
     <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -87,6 +87,8 @@ function App() {
                     <Routes>
                       <Route path="dashboard" element={<PatientDashboard />} />
                       <Route path="profile" element={<PatientProfile />} />
+                      <Route path="profile-verify" element={<ProfileVerify />} />
+                      {/* Add more patient routes as needed */}
                       <Route path="*" element={<Navigate to="dashboard" replace />} />
                     </Routes>
                   </ProtectedRoute>

@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
 
 // Helper function to make API requests
 const apiRequest = async (endpoint, options = {}) => {
@@ -62,7 +62,7 @@ export const api = {
 
   // Test endpoint - call the root endpoint directly
   testConnection: async () => {
-    const response = await fetch('http://localhost:5000/');
+    const response = await fetch('http://localhost:4000/');
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || 'Something went wrong');
