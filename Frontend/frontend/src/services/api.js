@@ -60,6 +60,14 @@ export const api = {
 
   getPatientProfile: () => apiRequest('/patient/profile'),
 
+  // Admin endpoints
+  createAdminProfile: (profileData) => apiRequest('/admin/profile', {
+    method: 'POST',
+    body: JSON.stringify(profileData),
+  }),
+
+  getAdminProfile: () => apiRequest('/admin/profile'),
+
   // Test endpoint - call the root endpoint directly
   testConnection: async () => {
     const response = await fetch('http://localhost:5000/');
