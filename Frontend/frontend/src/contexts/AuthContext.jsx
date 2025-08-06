@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '../services/api';
+import {jwtDecode} from 'jwt-decode';
 
 const AuthContext = createContext();
 
@@ -19,14 +20,19 @@ export const AuthProvider = ({ children }) => {
     // Check if user is logged in on app start
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
-    
+
     if (token && userData) {
       try {
-        setUser(JSON.parse(userData));
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        const decoded = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
+        if (decoded.exp && decoded.exp < currentTime) {
+          logout();
+        } else {
+          setUser(JSON.parse(userData));
+        }
+      } catch (err) {
+        console.error("Token decode error", err);
+        logout();
       }
     }
     setLoading(false);
@@ -35,11 +41,11 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const data = await api.login({ email, password });
-      
+
       // Store token and user data
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      
+
       setUser(data.user);
       return { success: true };
     } catch (error) {
@@ -51,11 +57,11 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       const data = await api.register(userData);
-      
+
       // Store token and user data
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      
+
       setUser(data.user);
       return { success: true };
     } catch (error) {
