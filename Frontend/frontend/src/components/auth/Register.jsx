@@ -76,7 +76,7 @@ const Register = () => {
       if (result.success) {
         // Redirect based on user role
         if (formData.role === 'admin') {
-          navigate('/admin/dashboard');
+          navigate('/admin/create-profile');
         } else {
           navigate('/patient/profile-verify');
         }

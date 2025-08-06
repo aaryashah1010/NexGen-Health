@@ -8,6 +8,7 @@ import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import AdminDashboard from './components/admin/Dashboard';
 import HospitalProfile from './components/admin/HospitalProfile';
+import HospitalProfileVerify from './components/admin/HospitalProfileVerify';
 import PatientDashboard from './components/patient/Dashboard';
 import PatientProfile from './components/patient/Profile';
 import TestConnection from './components/TestConnection';
@@ -74,6 +75,7 @@ function App() {
                   <ProtectedRoute allowedRoles={['admin']}>
                     <Routes>
                       <Route path="dashboard" element={<AdminDashboard />} />
+                      <Route path="create-profile" element={<HospitalProfileVerify />} />
                       <Route path="profile" element={<HospitalProfile />} />
                       <Route path="*" element={<Navigate to="dashboard" replace />} />
                     </Routes>
