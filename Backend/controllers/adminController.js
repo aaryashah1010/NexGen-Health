@@ -50,7 +50,7 @@ const createOrUpdateProfile = async (req, res) => {
         hospitalName, city, location, address, contactPerson,
         hospitalType: hospitalType || 'general',
         totalBeds,
-        availableBeds: available !== undefined ? available : adminProfile.available,
+        available: available !== undefined ? available : adminProfile.availableBeds,
         verificationDocuments
       });
 
@@ -60,7 +60,7 @@ const createOrUpdateProfile = async (req, res) => {
         userId, hospitalName, city, location, address, contactPerson,
         hospitalType: hospitalType || 'general',
         totalBeds,
-        availableBeds: available || 0,
+        available: available || 0,
         verificationDocuments
       });
 
