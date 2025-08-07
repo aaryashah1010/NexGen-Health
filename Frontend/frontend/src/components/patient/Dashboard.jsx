@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { api } from '../../services/api';
 import { 
   Siren, 
   MapPin, 
@@ -15,117 +16,65 @@ import {
   RefreshCw
 } from 'lucide-react';
 
-const hospitalsMock = [
-  {
-    id: 1,
-    name: 'CityCare Hospital',
-    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&h=200&fit=crop",
-    availableBeds: 12,
-    totalBeds: 150,
-    distance: 2.3,
-    rating: 4.8,
-    phone: '+91 98765 43210',
-    specialty: 'Emergency Care',
-    type: 'Government',
-    estimatedTime: '8 mins',
-    lastUpdated: '2 mins ago'
-  },
-  {
-    id: 2,
-    name: 'Healing Hands Clinic',
-    image: 'https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=400&h=200&fit=crop',
-    availableBeds: 7,
-    totalBeds: 80,
-    distance: 1.8,
-    rating: 4.6,
-    phone: '+91 98765 43211',
-    specialty: 'General Medicine',
-    type: 'Private',
-    estimatedTime: '6 mins',
-    lastUpdated: '5 mins ago'
-  },
-  {
-    id: 3,
-    name: 'GreenLife Hospital',
-    image: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=400&h=200&fit=crop',
-    availableBeds: 3,
-    totalBeds: 200,
-    distance: 4.1,
-    rating: 4.9,
-    phone: '+91 98765 43212',
-    specialty: 'Multi-specialty',
-    type: 'Private',
-    estimatedTime: '12 mins',
-    lastUpdated: '1 min ago'
-  },
-  {
-    id: 4,
-    name: 'Metro Medical Center',
-    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=200&fit=crop',
-    availableBeds: 15,
-    totalBeds: 120,
-    distance: 3.2,
-    rating: 4.7,
-    phone: '+91 98765 43213',
-    specialty: 'Cardiac Care',
-    type: 'Private',
-    estimatedTime: '10 mins',
-    lastUpdated: '3 mins ago'
-  },
-  {
-    id: 5,
-    name: 'Community Health Hub',
-    image: 'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=400&h=200&fit=crop',
-    availableBeds: 8,
-    totalBeds: 60,
-    distance: 0.9,
-    rating: 4.4,
-    phone: '+91 98765 43214',
-    specialty: 'Primary Care',
-    type: 'Government',
-    estimatedTime: '4 mins',
-    lastUpdated: '7 mins ago'
-  },
-  {
-    id: 6,
-    name: 'Advanced Care Institute',
-    image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&h=200&fit=crop',
-    availableBeds: 20,
-    totalBeds: 250,
-    distance: 5.7,
-    rating: 4.9,
-    phone: '+91 98765 43215',
-    specialty: 'Trauma Center',
-    type: 'Private',
-    estimatedTime: '16 mins',
-    lastUpdated: '4 mins ago'
-  }
-];
-
 const PatientDashboard = () => {
+  const [hospitals, setHospitals] = useState([]);
   const [sortBy, setSortBy] = useState('distance');
   const [filterType, setFilterType] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [favorites, setFavorites] = useState(new Set());
   const [isRefreshing, setIsRefreshing] = useState(false);
-  
+
+  useEffect(() => {
+    const fetchHospitals = async () => {
+      try {
+        const data = await api.getHospitals();
+        // Map backend fields to frontend fields
+        const mapped = (data.hospitals || []).map(hospital => ({
+          id: hospital.id,
+          name: hospital.hospitalName, // backend: hospitalName
+          type: hospital.hospitalType, // backend: hospitalType
+          city: hospital.city,
+          address: hospital.address,
+          location: hospital.location,
+          contactPerson: hospital.contactPerson,
+          totalBeds: hospital.totalBeds,
+          availableBeds: hospital.available, // backend: available
+          isVerified: hospital.isVerified,
+          verificationDocuments: hospital.verificationDocuments,
+          // Add defaults for missing fields
+          image: hospital.image || 'https://via.placeholder.com/400x200/e5e7eb/6b7280?text=Hospital+Image',
+          rating: hospital.rating || 4.2,
+          specialty: hospital.specialty || 'General',
+          distance: hospital.distance || Math.floor(Math.random() * 10) + 1, // fake distance if not present
+          estimatedTime: hospital.estimatedTime || '10-20 min',
+          phone: hospital.contactPersonPhone || 'N/A',
+          lastUpdated: hospital.updatedAt ? new Date(hospital.updatedAt).toLocaleString() : 'Recently'
+        }));
+        setHospitals(mapped);
+      } catch (err) {
+        setHospitals([]);
+      }
+    };
+    fetchHospitals();
+  }, []);
+
   // Filter and sort hospitals
-  const filteredAndSortedHospitals = hospitalsMock
+  const filteredAndSortedHospitals = hospitals
     .filter(hospital => {
-      const matchesSearch = hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           hospital.specialty.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFilter = filterType === 'all' || hospital.type.toLowerCase() === filterType;
+      const matchesSearch = hospital.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           hospital.specialty?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesFilter = filterType === 'all' || hospital.type?.toLowerCase() === filterType;
       return matchesSearch && matchesFilter;
     })
     .sort((a, b) => {
       switch (sortBy) {
         case 'availability':
-          return b.availableBeds - a.availableBeds;
+          return (b.availableBeds || 0) - (a.availableBeds || 0);
         case 'rating':
-          return b.rating - a.rating;
+          return (b.rating || 0) - (a.rating || 0);
         case 'distance':
         default:
-          return a.distance - b.distance;
+          return (a.distance || 0) - (b.distance || 0);
       }
     });
 

@@ -20,5 +20,6 @@ router.post('/profile', createOrUpdateProfile);
 
 // Get admin profile
 router.get('/profile', getAdminProfile);
+router.get('/hospitals', getAllHospitals);
 
 module.exports = router;

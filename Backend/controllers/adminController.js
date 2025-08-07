@@ -11,7 +11,7 @@ const createOrUpdateProfile = async (req, res) => {
       contactPerson,
       hospitalType,
       totalBeds,
-      availableBeds,
+      available,
       verificationDocuments
     } = req.body;
 
@@ -34,7 +34,7 @@ const createOrUpdateProfile = async (req, res) => {
       return res.status(400).json({ message: 'Total beds must be between 1 and 10000' });
     }
 
-    if (availableBeds !== undefined && (availableBeds < 0 || availableBeds > totalBeds)) {
+    if (available !== undefined && (available < 0 || available > totalBeds)) {
       return res.status(400).json({ message: 'Invalid available beds' });
     }
 
@@ -50,7 +50,7 @@ const createOrUpdateProfile = async (req, res) => {
         hospitalName, city, location, address, contactPerson,
         hospitalType: hospitalType || 'general',
         totalBeds,
-        availableBeds: availableBeds !== undefined ? availableBeds : adminProfile.availableBeds,
+        available: available !== undefined ? available : adminProfile.availableBeds,
         verificationDocuments
       });
 
@@ -60,7 +60,7 @@ const createOrUpdateProfile = async (req, res) => {
         userId, hospitalName, city, location, address, contactPerson,
         hospitalType: hospitalType || 'general',
         totalBeds,
-        availableBeds: availableBeds || 0,
+        available: available || 0,
         verificationDocuments
       });
 
@@ -93,30 +93,6 @@ const getAdminProfile = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
-};
-
-const getAllHospitals = async (req, res) => {
-  try {
-    const hospitals = await AdminProfile.findAll({
-      include: [{
-        model: User,
-        as: 'user',
-        attributes: ['id', 'name', 'email', 'password', 'phone','role']
-      }],
-      order: [['createdAt', 'DESC']]
-    });
-
-    return res.status(200).json({
-      message: 'Hospitals retrieved successfully',
-      hospitals: hospitals
-    });
-  } catch (error) {
-    console.error('Error in getAllHospitals:', error);
-    return res.status(500).json({
-      message: 'Internal server error',
-      error: error.message
-    });
   }
 };
 
