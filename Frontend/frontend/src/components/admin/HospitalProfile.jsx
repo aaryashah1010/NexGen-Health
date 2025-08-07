@@ -33,7 +33,8 @@ const HospitalProfile = () => {
     hospitalType: 'general',
     totalBeds: '',
     availableBeds: '',
-    verificationDocuments: []
+    verificationDocuments: [],
+    hospitalPhoto: null
   });
 
   const [locationLoading, setLocationLoading] = useState(false);
