@@ -96,6 +96,7 @@ const getAdminProfile = async (req, res) => {
   }
 };
 
+
 module.exports = {
   createOrUpdateProfile,
   getAdminProfile,
