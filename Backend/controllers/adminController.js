@@ -50,7 +50,7 @@ const createOrUpdateProfile = async (req, res) => {
         hospitalName, city, location, address, contactPerson,
         hospitalType: hospitalType || 'general',
         totalBeds,
-        available: available !== undefined ? available : adminProfile.availableBeds,
+        available: available !== undefined ? available : adminProfile.available,
         verificationDocuments
       });
 
@@ -112,8 +112,29 @@ const getAllHospitals = async (req, res) => {
   }
 };
 
+const getHospitalById = async (req, res) => {
+  try {
+    const { id } = req.params; 
+    const hospital = await AdminProfile.findOne({
+      where: { userId: id },
+      include: [{
+        model: User,
+        as: 'user',
+        attributes: ['id', 'email', 'name', 'role']
+      }]
+    });
+    if (!hospital) {
+      return res.status(404).json({ message: 'Hospital not found' });
+    }
+    res.status(200).json({ hospital });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
 module.exports = {
   createOrUpdateProfile,
   getAdminProfile,
-  getAllHospitals
+  getAllHospitals,
+  getHospitalById
 };

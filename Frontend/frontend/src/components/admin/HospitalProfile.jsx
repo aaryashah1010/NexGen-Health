@@ -175,7 +175,7 @@ const HospitalProfile = () => {
           longitude: parseFloat(formData.location.longitude)
         },
         totalBeds: parseInt(formData.totalBeds),
-        availableBeds: formData.available ? parseInt(formData.available) : 0
+        availableBeds: formData.availableBeds ? parseInt(formData.available) : 0
       };
 
       await api.createAdminProfile(profileData);

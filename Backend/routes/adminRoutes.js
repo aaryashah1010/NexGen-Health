@@ -1,5 +1,5 @@
 const express = require('express');
-const { createOrUpdateProfile, getAdminProfile, getAllHospitals } = require('../controllers/adminController');
+const { createOrUpdateProfile, getAdminProfile, getAllHospitals,getHospitalById} = require('../controllers/adminController');
 const { protect } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
@@ -15,5 +15,5 @@ router.use(protect);
 router.post('/profile', createOrUpdateProfile);
 router.get('/profile', getAdminProfile);
 router.get('/hospitals', getAllHospitals);
-
+router.get('/hospitals/:id', getHospitalById);
 module.exports = router;

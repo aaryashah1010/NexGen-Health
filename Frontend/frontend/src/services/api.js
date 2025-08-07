@@ -69,7 +69,7 @@ export const api = {
   getAdminProfile: () => apiRequest('/admin/profile'),
 
   getHospitals: () => apiRequest('/admin/hospitals'),
-
+  getHospitalsById:(id) => apiRequest(`/admin/hospitals/${id}`),
   // Test endpoint - call the root endpoint directly
   testConnection: async () => {
     const response = await fetch('http://localhost:4000/');
